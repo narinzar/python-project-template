@@ -18,13 +18,13 @@ The repository includes a cross-platform script (`setup.ps1` for PowerShell) tha
 #### For Windows (PowerShell)
 - Run the following command in PowerShell:
   ```powershell
-  .\setup.ps1
+  .\venv_setup_and_activate.ps1
   ```
 
 #### For Linux/macOS (Bash)
 - Run the following command in your terminal:
   ```bash
-  ./setup.sh
+  ./venv_setup_and_activate.sh
   ```
 
 The script will automatically check your OS and run the appropriate commands for setting up the environment.
