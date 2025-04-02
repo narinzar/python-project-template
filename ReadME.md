@@ -1,4 +1,3 @@
-
 # Python Project Template
 
 This is a basic template for Python projects, set up with a virtual environment and dependency management. It works across **Windows**, **Linux**, and **macOS** systems. Use the provided scripts to set up the virtual environment, install dependencies, and manage your project.
@@ -54,7 +53,7 @@ If you want to use a specific version of Python that is not the default on your 
 ### Activate the Virtual Environment
 - On **Windows (PowerShell)**:
   ```powershell
-  .\venv\Scripts\Activate
+  .\activate_venv.ps1
   ```
 
   *Note*: PowerShell automatically activates `venv` during the setup, so manual activation is optional.
