@@ -23,16 +23,24 @@ The repository includes a cross-platform script that automates the process of se
   ```
 
 #### For Linux/macOS (Bash)
-- Run the following command in your terminal:
+You have two options:
+- Run the following command to activate in your current shell:
   ```bash
   source setup_env.sh
   ```
+- Or simply execute the script directly to launch a new shell with the environment activated:
+  ```bash
+  ./setup_env.sh
+  ```
   
-> **Important**: On Unix systems, you must use `source` to run the script to activate the environment in your current shell.
+> **Note**: The script automatically detects if it's being sourced or executed directly:
+> - When sourced (`source setup_env.sh`), it activates the environment in your current shell
+> - When executed directly (`./setup_env.sh`), it launches a new shell with the environment activated
+> - If a virtual environment already exists, it will be activated without recreation
 
 The script will automatically:
 - Detect your operating system
-- Create a virtual environment if it doesn't exist
+- Create a virtual environment if it doesn't exist (or just activate it if it already exists)
 - Activate the virtual environment
 - Upgrade pip to the latest version
 - Install all dependencies from requirements.txt
@@ -143,7 +151,7 @@ The repository includes a script that handles the virtual environment setup on W
 
 ### `setup_env.sh` (Linux/macOS)
 
-This script handles the virtual environment setup on Windows and Unix-like systems. Remember to run it with `source setup_env.sh` on Uinx and ` setup_env.sh` on windows to install and activate the environment in your current shell.
+This script handles the virtual environment setup on Windows and Unix-like systems. Remember to run it with `source setup_env.sh` on Unix to install and activate the environment in your current shell, or simply `./setup_env.sh` to have it launch a new shell with the environment activated.
 
 ---
 
