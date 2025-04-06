@@ -139,15 +139,11 @@ This allows local scripts to run but ensures that downloaded scripts are signed.
 
 ## Included Setup Scripts
 
-The repository includes the following setup scripts:
-
-### `setup_env.ps1` (Windows PowerShell)
-
-This script handles the virtual environment setup on Windows systems.
+The repository includes a script that handles the virtual environment setup on Windows systems.
 
 ### `setup_env.sh` (Linux/macOS)
 
-This script handles the virtual environment setup on Unix-like systems. Remember to run it with `source setup_env.sh` to activate the environment in your current shell.
+This script handles the virtual environment setup on Windows and Unix-like systems. Remember to run it with `source setup_env.sh` on Uinx and ` setup_env.sh` on windows to install and activate the environment in your current shell.
 
 ---
 
