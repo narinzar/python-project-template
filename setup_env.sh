@@ -50,8 +50,7 @@ else
         fi
     fi
     
-    # Activate and setup (this part will only work if script is sourced)
-    # Check if this script is being sourced
+    # Check if being sourced
     (return 0 2>/dev/null) && SOURCED=1 || SOURCED=0
     
     if [ "$SOURCED" -eq 1 ]; then
@@ -62,13 +61,14 @@ else
         pip install -r requirements.txt
         echo "✅ Virtual environment is now ACTIVE"
     else
-        # Script is not sourced, use the venv python directly
+        # Script is executed directly
         echo "Setting up packages..."
-        venv/bin/pip install --upgrade pip
-        venv/bin/pip install -r requirements.txt
+        ./venv/bin/pip install --upgrade pip
+        ./venv/bin/pip install -r requirements.txt
         echo "✅ Virtual environment setup complete!"
-        echo ""
-        echo "IMPORTANT: To activate the virtual environment, run:"
-        echo "    source venv/bin/activate"
+        
+        # Execute a new shell with the virtual environment activated
+        echo "Activating virtual environment..."
+        exec bash --rcfile <(echo '. ~/.bashrc; source "$(dirname "$0")/venv/bin/activate"; echo "Virtual environment activated! Type exit to return to normal shell."')
     fi
 fi
