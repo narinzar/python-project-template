@@ -24,18 +24,12 @@ The repository includes a cross-platform script that automates the process of se
 
 #### For Linux/macOS (Bash)
 You have two options:
-- Run the following command to activate in your current shell:
+- Run the following command to create (if not exist) and/or activate in your current shell:
   ```bash
   source setup_env.sh
   ```
-- Or simply execute the script directly to launch a new shell with the environment activated:
-  ```bash
-  ./setup_env.sh
-  ```
   
 > **Note**: The script automatically detects if it's being sourced or executed directly:
-> - When sourced (`source setup_env.sh`), it activates the environment in your current shell
-> - When executed directly (`./setup_env.sh`), it launches a new shell with the environment activated
 > - If a virtual environment already exists, it will be activated without recreation
 
 The script will automatically:
