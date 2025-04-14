@@ -116,7 +116,28 @@ pip freeze > requirements.txt
 
 ---
 
-## Git Setup (if not already configured)
+Git Setup (Prompted Automatically)
+As part of the automated setup script, you will be prompted to provide your Git identity if not already configured.
+
+When running setup_env.sh, you will be asked to enter:
+
+user.name: your Git username
+
+user.email: your Git email
+
+These values will be saved globally using:
+
+bash
+Copy
+Edit
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+If you've already configured Git globally, this prompt will just show you the current values.
+
+---
+
+
+## Git Setup - Manually (if not already configured)
 
 To configure Git for your project:
 
