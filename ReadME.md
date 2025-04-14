@@ -26,6 +26,7 @@ The repository includes a cross-platform script that automates the process of se
 You have two options:
 - Run the following command to create (if not exist) and/or activate in your current shell:
   ```bash
+  sed -i 's/\r$//' setup_env.sh
   source setup_env.sh
   ```
   
