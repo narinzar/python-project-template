@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# === [ Line ending fix for Unix-like OS ] ===
+if [[ "$OSTYPE" != "msys" && "$OSTYPE" != "win32" && "$OSTYPE" != "cygwin" ]]; then
+    if file "$0" | grep -q CRLF; then
+        echo "🔧 Fixing CRLF line endings in-place..."
+        sed -i.bak 's/\r$//' "$0"
+        echo "🔁 Restarting script after cleanup..."
+        exec bash "$0"
+        exit 0
+    fi
+fi
+
 # === [ Windows (PowerShell) Setup ] ===
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
     # Create PowerShell setup script
@@ -20,6 +31,20 @@ if (Test-Path "venv") {
     }
 }
 Write-Output "✅ Virtual environment is now ACTIVE!"
+
+# === [ Git config prompt for Windows PowerShell ] ===
+Write-Output ""
+Write-Output "🔧 Let's configure your Git identity."
+
+$userName = Read-Host "Enter your Git user.name"
+$userEmail = Read-Host "Enter your Git user.email"
+
+git config --global user.name "$userName"
+git config --global user.email "$userEmail"
+
+Write-Output "`n✅ Git global config updated:"
+git config --global user.name
+git config --global user.email
 EOF
 
     echo "Windows detected. Running PowerShell script..."
@@ -69,3 +94,19 @@ else
     pip install -r requirements.txt
     echo "✅ Virtual environment is now ACTIVE"
 fi
+
+# === [ Git config prompt for Unix-like systems ] ===
+echo ""
+echo "🔧 Let's configure your Git identity."
+
+read -p "Enter your Git user.name: " git_user
+read -p "Enter your Git user.email: " git_email
+
+git config --global user.name "$git_user"
+git config --global user.email "$git_email"
+
+echo "✅ Git global config updated:"
+git config --global user.name
+git config --global user.email
+
+ 
