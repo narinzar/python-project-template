@@ -1,16 +1,5 @@
 #!/bin/bash
 
-# === [ Line ending fix for Unix-like OS ] ===
-if [[ "$OSTYPE" != "msys" && "$OSTYPE" != "win32" && "$OSTYPE" != "cygwin" ]]; then
-    if file "$0" | grep -q CRLF; then
-        echo "🔧 Converting Windows line endings to Unix..."
-        sed 's/\r$//' "$0" > /tmp/setup_env_fixed.sh
-        chmod +x /tmp/setup_env_fixed.sh
-        exec bash /tmp/setup_env_fixed.sh
-        exit 0
-    fi
-fi
-
 # === [ Windows (PowerShell) Setup ] ===
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
     # Create PowerShell setup script
@@ -80,6 +69,3 @@ else
     pip install -r requirements.txt
     echo "✅ Virtual environment is now ACTIVE"
 fi
-
-# Clean up temp script if needed
-[ -f /tmp/setup_env_fixed.sh ] && rm /tmp/setup_env_fixed.sh
