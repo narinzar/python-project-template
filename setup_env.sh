@@ -109,4 +109,5 @@ echo "✅ Git global config updated:"
 git config --global user.name
 git config --global user.email
 
- 
+# sed -i 's/\r$//' setup_env.sh
+# source setup_env.sh
