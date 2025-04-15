@@ -111,3 +111,4 @@ git config --global user.email
 
 # sed -i 's/\r$//' setup_env.sh
 # source setup_env.sh
+# & "C:\Program Files\Git\bin\bash.exe" -c "./setup_env.sh"
