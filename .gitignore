@@ -1,4 +1,10 @@
 # Python
+# Python package build artifacts
+*.egg-info/
+*.egg
+# uv lock file
+uv.lock
+
 __pycache__/
 *.py[cod]
 *$py.class
