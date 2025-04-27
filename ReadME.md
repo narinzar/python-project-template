@@ -20,9 +20,13 @@ The repository includes a cross-platform script that automates the process of se
 #### For Windows (PowerShell)
 
 Run the following command in PowerShell:
-
-```powershell
+## 1. below command will create a ps1 file
+``` 
 & "C:\Program Files\Git\bin\bash.exe" -c "./setup_env.sh"
+```
+## 2. executing the ps1 file created in step 1
+```
+.\setup_venv.ps1
 ```
 
 #### For Linux/macOS (Bash)
