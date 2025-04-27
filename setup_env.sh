@@ -13,27 +13,31 @@ fi
 
 # === [ Windows (PowerShell) Setup ] ===
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
-    # Create PowerShell setup script
+    # Create a setup PowerShell script that can be run directly
     cat > setup_venv.ps1 << 'EOF'
-# Detect the OS
-$OS = $env:OS
-# Check if venv exists
+# Make this script modify the current session
+$ErrorActionPreference = "Stop"
+
 if (Test-Path "venv") {
-    Write-Output "Virtual environment exists. Activating..."
-    .\venv\Scripts\Activate
+    Write-Output "Virtual environment exists. No need to recreate."
 } else {
     Write-Output "Creating new virtual environment..."
     python -m venv venv
-    if ($OS -match "Windows") {
-        .\venv\Scripts\Activate
-        python.exe -m pip install --upgrade pip
-        python.exe -m pip install uv
-        uv pip install -r requirements.txt
-    }
 }
-Write-Output "[OK] Virtual environment is now ACTIVE!"
 
-# Git config prompt
+Write-Output "Activating virtual environment..."
+# Use & to properly call the activation script
+& ./venv/Scripts/Activate.ps1
+
+Write-Output "Upgrading pip..."
+python -m pip install --upgrade pip
+
+Write-Output "Installing uv..."
+python -m pip install uv
+
+Write-Output "Installing requirements with uv..."
+uv pip install -r requirements.txt
+
 Write-Output ""
 Write-Output "[*] Let's configure your Git identity."
 
@@ -46,10 +50,19 @@ git config --global user.email "$userEmail"
 Write-Output "`n[OK] Git global config updated:"
 git config --global user.name
 git config --global user.email
+
+Write-Output "`n[OK] Virtual environment is now ACTIVE in this window!"
 EOF
 
-    echo "Windows detected. Running PowerShell script..."
-    powershell -ExecutionPolicy Bypass -File setup_venv.ps1
+    echo "Windows detected. PowerShell setup script created."
+    echo ""
+    echo "=============================================="
+    echo "To set up and activate your environment, run this command in PowerShell:"
+    echo ""
+    echo "    . .\setup_venv.ps1"
+    echo ""
+    echo "The dot at the beginning is important - it ensures the script runs in the current session"
+    echo "=============================================="
     exit 0
 fi
 
