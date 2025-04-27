@@ -19,37 +19,63 @@ if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; t
 $ErrorActionPreference = "Stop"
 
 if (Test-Path "venv") {
-    Write-Output "Virtual environment exists. No need to recreate."
+    Write-Output "Virtual environment exists. Activating..."
+    # Just activate without reinstalling
+    & .\venv\Scripts\Activate.ps1
 } else {
     Write-Output "Creating new virtual environment..."
     python -m venv venv
+    
+    Write-Output "Activating virtual environment..."
+    & .\venv\Scripts\Activate.ps1
+
+    Write-Output "Upgrading pip..."
+    python -m pip install --upgrade pip
+
+    Write-Output "Installing uv..."
+    python -m pip install uv
+
+    # Create pyproject.toml if it doesn't exist
+    if (-not (Test-Path "pyproject.toml")) {
+        Write-Output "Creating pyproject.toml for UV compatibility..."
+        @"
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-project"
+version = "0.1.0"
+description = "Python project template"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "pandas",
+    "python-dotenv",
+    "ipykernel"
+]
+
+[tool.uv]
+exclude = ["dev-dependencies"]
+"@ | Out-File -FilePath "pyproject.toml" -Encoding UTF8
+    }
+
+    Write-Output "Installing dependencies with uv..."
+    uv pip install -e .
+
+    Write-Output ""
+    Write-Output "[*] Let's configure your Git identity."
+
+    $userName = Read-Host "Enter your Git user.name"
+    $userEmail = Read-Host "Enter your Git user.email"
+
+    git config --global user.name "$userName"
+    git config --global user.email "$userEmail"
+
+    Write-Output "`n[OK] Git global config updated:"
+    git config --global user.name
+    git config --global user.email
 }
-
-Write-Output "Activating virtual environment..."
-# Use & to properly call the activation script
-& ./venv/Scripts/Activate.ps1
-
-Write-Output "Upgrading pip..."
-python -m pip install --upgrade pip
-
-Write-Output "Installing uv..."
-python -m pip install uv
-
-Write-Output "Installing requirements with uv..."
-uv pip install -r requirements.txt
-
-Write-Output ""
-Write-Output "[*] Let's configure your Git identity."
-
-$userName = Read-Host "Enter your Git user.name"
-$userEmail = Read-Host "Enter your Git user.email"
-
-git config --global user.name "$userName"
-git config --global user.email "$userEmail"
-
-Write-Output "`n[OK] Git global config updated:"
-git config --global user.name
-git config --global user.email
 
 Write-Output "`n[OK] Virtual environment is now ACTIVE in this window!"
 EOF
@@ -80,9 +106,33 @@ if [ $SOURCED -ne 0 ]; then
     exit 1
 fi
 
+# Create pyproject.toml if it doesn't exist
+if [ ! -f "pyproject.toml" ]; then
+    echo "Creating pyproject.toml for UV compatibility..."
+    cat > pyproject.toml << 'EOF'
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-project"
+version = "0.1.0"
+description = "Python project template"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "pandas",
+    "python-dotenv",
+    "ipykernel"
+]
+
+[tool.uv]
+exclude = ["dev-dependencies"]
+EOF
+fi
+
 if [ -d "venv" ]; then
-    echo "Virtual environment exists. No need to recreate."
-    echo "Activating virtual environment..."
+    echo "Virtual environment exists. Activating..."
     source venv/bin/activate
     echo "✅ Virtual environment is now ACTIVE"
 else
@@ -106,20 +156,22 @@ else
     source venv/bin/activate
     pip install --upgrade pip
     pip install uv
-    uv pip install -r requirements.txt
+    
+    echo "Installing dependencies with uv..."
+    uv pip install -e .
     echo "✅ Virtual environment is now ACTIVE"
+
+    # === [ Git config prompt for Unix-like systems ] ===
+    echo ""
+    echo "🔧 Let's configure your Git identity."
+
+    read -p "Enter your Git user.name: " git_user
+    read -p "Enter your Git user.email: " git_email
+
+    git config --global user.name "$git_user"
+    git config --global user.email "$git_email"
+
+    echo "✅ Git global config updated:"
+    git config --global user.name
+    git config --global user.email
 fi
-
-# === [ Git config prompt for Unix-like systems ] ===
-echo ""
-echo "🔧 Let's configure your Git identity."
-
-read -p "Enter your Git user.name: " git_user
-read -p "Enter your Git user.email: " git_email
-
-git config --global user.name "$git_user"
-git config --global user.email "$git_email"
-
-echo "✅ Git global config updated:"
-git config --global user.name
-git config --global user.email
