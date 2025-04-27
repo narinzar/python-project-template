@@ -1,6 +1,6 @@
 # Python Project Template
 
-This is a basic template for Python projects, set up with a virtual environment and dependency management. It works across Windows, Linux, and macOS systems. Uses uv (Ultra Fast) for dependency installation where available. Use the provided scripts to set up the virtual environment, install dependencies, and manage your project.
+This is a basic template for Python projects, set up with a virtual environment and dependency management. It works across Windows, Linux, and macOS systems. Uses uv (Ultra Fast) for dependency installation with modern Python packaging. Use the provided scripts to set up the virtual environment, install dependencies, and manage your project.
 
 ## Setup Instructions
 
@@ -15,23 +15,21 @@ cd <repo-name>
 
 ### 2. Running the Setup
 
-The repository includes a cross-platform script that automates the process of setting up your virtual environment, upgrading pip, and installing dependencies (using uv for ultra-fast installation where available).
+The repository includes a cross-platform script that automates the process of setting up your virtual environment, upgrading pip, and installing dependencies (using uv for ultra-fast installation).
 
 #### For Windows (PowerShell)
 
 Run the following command in PowerShell:
-## 1. below command will create a ps1 file
+## 1. Below command will create a ps1 file
 ``` 
 & "C:\Program Files\Git\bin\bash.exe" -c "./setup_env.sh"
 ```
-## 2. executing the ps1 file created in step 1
+## 2. Executing the ps1 file created in step 1
 ```
-.\setup_venv.ps1
+. .\setup_venv.ps1  # Note the dot at the beginning - this is important!
 ```
 
 #### For Linux/macOS (Bash)
-
-You have two options:
 
 Run the following command to create (if not exist) and/or activate in your current shell:
 
@@ -42,7 +40,7 @@ source setup_env.sh
 
 **Note:** The script automatically detects if it's being sourced or executed directly:
 - If a virtual environment already exists, it will be activated without recreation
-- Uses uv pip (10-100x faster than regular pip) for dependency installation
+- Uses uv pip with pyproject.toml for modern dependency management (10-100x faster than regular pip)
 
 The script will automatically:
 - Detect your operating system
@@ -50,7 +48,8 @@ The script will automatically:
 - Activate the virtual environment
 - Upgrade pip to the latest version
 - Install uv (ultra-fast package installer)
-- Install all dependencies from requirements.txt using uv pip
+- Create a pyproject.toml file if it doesn't exist
+- Install all dependencies using `uv pip install -e .`
 
 ## Virtual Environment
 
@@ -116,24 +115,39 @@ python -m venv venv
 
 ## Managing Dependencies
 
-### Installing Dependencies
+### Project Dependencies with pyproject.toml
 
-Once the virtual environment is activated, install the dependencies listed in requirements.txt:
+This template uses modern Python packaging with `pyproject.toml` for dependency management. The file is automatically created by the setup script with these default dependencies:
 
-```bash
-# Regular pip (slower)
-pip install -r requirements.txt
-
-# OR using uv (recommended, 10-100x faster)
-uv pip install -r requirements.txt
+```toml
+[project]
+dependencies = [
+    "numpy",
+    "pandas",
+    "python-dotenv",
+    "ipykernel"
+]
 ```
 
-### Freezing Dependencies
+### Installing Dependencies
 
-If you install new packages or update existing ones, remember to update requirements.txt:
+Once the virtual environment is activated, dependencies are installed using:
 
 ```bash
-pip freeze > requirements.txt
+# Installing in development mode
+uv pip install -e .
+```
+
+### Adding New Dependencies
+
+To add a new package:
+
+```bash
+# Add a package directly
+uv add package-name
+
+# Or manually edit pyproject.toml and reinstall
+uv pip install -e .
 ```
 
 ## Git Setup (Prompted Automatically)
@@ -185,25 +199,26 @@ The repository includes a script that handles the virtual environment setup on a
 
 This script:
 - Handles virtual environment setup on all platforms
-- Uses uv pip for ultra-fast dependency installation (where available)
+- Uses uv pip with pyproject.toml for modern dependency management
 - Automatically configures Git if needed
-- Can be run with `source setup_env.sh` on Unix or via PowerShell on Windows
+- Can be run with `source setup_env.sh` on Unix or generates a PowerShell script on Windows
 
 ## Performance Note
 
-This template now includes support for uv, a Rust-based Python package installer that's:
+This template includes support for uv, a Rust-based Python package installer that's:
 - 10-100x faster than regular pip
-- Compatible with existing requirements.txt
+- Compatible with modern Python packaging (pyproject.toml)
 - Automatically used by the setup script
 
 For manual usage after setup:
 
 ```bash
-uv pip install <package>  # Instead of pip install <package>
+uv add <package>         # Add a package to your project
+uv pip install -e .      # Reinstall your project in development mode
 ```
 
 ## Conclusion
 
-This template provides a ready-to-go environment for your Python project with ultra-fast dependency installation, ensuring you don't need to repeat the setup process every time. Simply use the provided scripts and enjoy a streamlined development experience!
+This template provides a ready-to-go environment for your Python project with ultra-fast dependency installation and modern Python packaging, ensuring you don't need to repeat the setup process every time. Simply use the provided scripts and enjoy a streamlined development experience!
 
 Feel free to modify the structure or add additional tools as needed for your project.
