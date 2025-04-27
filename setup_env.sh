@@ -27,14 +27,15 @@ if (Test-Path "venv") {
     if ($OS -match "Windows") {
         .\venv\Scripts\Activate
         python.exe -m pip install --upgrade pip
-        pip install -r requirements.txt
+        python.exe -m pip install uv
+        uv pip install -r requirements.txt
     }
 }
-Write-Output "✅ Virtual environment is now ACTIVE!"
+Write-Output "[OK] Virtual environment is now ACTIVE!"
 
-# === [ Git config prompt for Windows PowerShell ] ===
+# Git config prompt
 Write-Output ""
-Write-Output "🔧 Let's configure your Git identity."
+Write-Output "[*] Let's configure your Git identity."
 
 $userName = Read-Host "Enter your Git user.name"
 $userEmail = Read-Host "Enter your Git user.email"
@@ -42,7 +43,7 @@ $userEmail = Read-Host "Enter your Git user.email"
 git config --global user.name "$userName"
 git config --global user.email "$userEmail"
 
-Write-Output "`n✅ Git global config updated:"
+Write-Output "`n[OK] Git global config updated:"
 git config --global user.name
 git config --global user.email
 EOF
@@ -91,7 +92,8 @@ else
     echo "Activating virtual environment..."
     source venv/bin/activate
     pip install --upgrade pip
-    pip install -r requirements.txt
+    pip install uv
+    uv pip install -r requirements.txt
     echo "✅ Virtual environment is now ACTIVE"
 fi
 
@@ -108,7 +110,3 @@ git config --global user.email "$git_email"
 echo "✅ Git global config updated:"
 git config --global user.name
 git config --global user.email
-
-# sed -i 's/\r$//' setup_env.sh
-# source setup_env.sh
-# & "C:\Program Files\Git\bin\bash.exe" -c "./setup_env.sh"
