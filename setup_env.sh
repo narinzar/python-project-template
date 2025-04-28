@@ -175,3 +175,7 @@ else
     git config --global user.name
     git config --global user.email
 fi
+
+
+# & "C:\Program Files\Git\bin\bash.exe" -c "./setup_env.sh"
+# sed -i 's/\r$//' setup_env.sh source setup_env.sh
