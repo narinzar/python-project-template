@@ -1,6 +1,6 @@
 # Python Project Template
 
-This is a basic template for Python projects, set up with a virtual environment and dependency management. It works across Windows, Linux, and macOS systems. Uses uv (Ultra Fast) for dependency installation with modern Python packaging. Use the provided scripts to set up the virtual environment, install dependencies, and manage your project.
+This is a modern Python project template using UV (Ultra Fast) for project and dependency management. It provides a streamlined setup process that works across Windows, Linux, and macOS systems. UV offers 10-100x faster package installation compared to pip while maintaining full compatibility with the Python ecosystem.
 
 ## Setup Instructions
 
@@ -15,7 +15,7 @@ cd <repo-name>
 
 ### 2. Running the Setup
 
-The repository includes a cross-platform script that automates the process of setting up your virtual environment, upgrading pip, and installing dependencies (using uv for ultra-fast installation).
+The repository includes a cross-platform script that automates the process of setting up your project with UV.
 
 #### For Windows (PowerShell)
 
@@ -39,39 +39,67 @@ source setup_env.sh
 ```
 
 **Note:** The script automatically detects if it's being sourced or executed directly:
-- If a virtual environment already exists, it will be activated without recreation
-- Uses uv pip with pyproject.toml for modern dependency management (10-100x faster than regular pip)
+- If UV isn't installed, it will be installed automatically
+- Creates a virtual environment using UV
+- Initializes the UV project
+- Activates the virtual environment
+- Installs all dependencies from pyproject.toml
 
 The script will automatically:
 - Detect your operating system
-- Create a virtual environment if it doesn't exist (or just activate it if it already exists)
-- Activate the virtual environment
-- Upgrade pip to the latest version
-- Install uv (ultra-fast package installer)
-- Create a pyproject.toml file if it doesn't exist
+- Install UV if not already present
+- Create a virtual environment in `.venv`
+- Initialize a UV project with `uv init`
 - Install all dependencies using `uv pip install -e .`
+- Configure Git identity if needed
 
-## Virtual Environment
+## UV Commands and Usage
 
-If you want to manually create or recreate the virtual environment, you can do so with the following steps:
-
-### Create a New Virtual Environment
-
-Run this command to create a new virtual environment:
+### Basic UV Commands
 
 ```bash
-python -m venv venv
+# Initialize a new UV project
+uv init
+
+# Create a virtual environment
+uv venv
+
+# Add a dependency
+uv add package-name
+
+# Add development dependency
+uv add --dev package-name
+
+# Install dependencies from pyproject.toml
+uv pip install -e .
+
+# Show installed packages
+uv pip freeze
+
+# Run a command in the project environment
+uv run python script.py
+
+# Lock dependencies
+uv lock
+
+# Sync environment with lock file
+uv sync
 ```
 
-### Create Virtual Environment from Other Python Versions
+### Virtual Environment Management with UV
 
-If you want to use a specific version of Python that is not the default on your system (e.g., Python 3.11), follow these steps:
-
-1. Download and install the version of Python you want to use (e.g., Python 3.11).
-2. Use the following command to create a virtual environment from that specific Python version:
+UV creates virtual environments in `.venv` by default:
 
 ```bash
-C:\Users\YOURCOMPUTERUSERNAME\AppData\Local\Programs\Python\Python311\python.exe -m venv venv
+# Create a new virtual environment
+uv venv
+
+# Create with specific Python version
+uv venv --python 3.11
+
+# Remove virtual environment
+rm -rf .venv  # Unix/macOS
+Remove-Item -Recurse -Force .venv  # Windows PowerShell
 ```
 
 ### Activate the Virtual Environment
@@ -79,13 +107,13 @@ C:\Users\YOURCOMPUTERUSERNAME\AppData\Local\Programs\Python\Python311\python.exe
 On Windows (PowerShell):
 
 ```powershell
-.\venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 ```
 
 On Linux/macOS (Bash):
 
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ### Deactivate the Virtual Environment
@@ -96,58 +124,149 @@ To deactivate the virtual environment, simply run:
 deactivate
 ```
 
-### Remove and Recreate the Virtual Environment
-
-If you need to delete and recreate the virtual environment, follow these steps:
-
-1. Remove the existing venv directory:
-
-```bash
-Remove-Item -Recurse -Force venv  # Windows (PowerShell)
-rm -rf venv                      # Linux/macOS (Bash)
-```
-
-2. Recreate the virtual environment:
-
-```bash
-python -m venv venv
-```
-
-## Managing Dependencies
+## Managing Dependencies with UV
 
 ### Project Dependencies with pyproject.toml
 
-This template uses modern Python packaging with `pyproject.toml` for dependency management. The file is automatically created by the setup script with these default dependencies:
+UV uses `pyproject.toml` for dependency management. The setup script creates a default configuration:
 
 ```toml
 [project]
+name = "python-project"
+version = "0.1.0"
+description = "Python project template"
+requires-python = ">=3.8"
 dependencies = [
     "numpy",
     "pandas",
     "python-dotenv",
     "ipykernel"
 ]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+dev-dependencies = []
 ```
 
 ### Installing Dependencies
 
-Once the virtual environment is activated, dependencies are installed using:
-
 ```bash
-# Installing in development mode
+# Install project dependencies
 uv pip install -e .
+
+# Install all dependencies including dev
+uv sync
+
+# Install from requirements file (if needed)
+uv pip install -r requirements.txt
 ```
 
 ### Adding New Dependencies
 
-To add a new package:
+```bash
+# Add a runtime dependency
+uv add requests
+
+# Add multiple dependencies
+uv add flask sqlalchemy
+
+# Add development dependency
+uv add --dev pytest black
+
+# Add with version constraints
+uv add "django>=4.0"
+```
+
+### Freezing Dependencies
 
 ```bash
-# Add a package directly
-uv add package-name
+# Show installed packages
+uv pip freeze
 
-# Or manually edit pyproject.toml and reinstall
-uv pip install -e .
+# Export to requirements.txt
+uv pip freeze > requirements.txt
+
+# Create a lockfile
+uv lock
+```
+
+### Running Commands with UV
+
+```bash
+# Run Python scripts
+uv run python script.py
+
+# Run module
+uv run -m pytest
+
+# Run with specific Python version
+uv run --python 3.11 python script.py
+```
+
+## Advanced UV Features
+
+### UV Tool Management
+
+```bash
+# Install a tool globally
+uv tool install ruff
+
+# Run a tool
+uv tool run ruff check .
+
+# Update tools
+uv tool update ruff
+```
+
+### UV Cache Management
+
+```bash
+# Clear UV cache
+uv cache clean
+
+# Show cache info
+uv cache dir
+```
+
+## Fallback: Using pip (if UV is unavailable)
+
+If UV is not available or you need to use pip:
+
+### Create Virtual Environment with pip
+
+```bash
+# Create virtual environment
+python -m venv .venv
+
+# Activate (Windows PowerShell)
+.\.venv\Scripts\Activate.ps1
+
+# Activate (Unix/macOS)
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+# or
+pip install -e .
+```
+
+### Managing Dependencies with pip
+
+```bash
+# Install package
+pip install package-name
+
+# Install from pyproject.toml
+pip install -e .
+
+# Freeze dependencies
+pip freeze > requirements.txt
+
+# Install from requirements
+pip install -r requirements.txt
 ```
 
 ## Git Setup (Prompted Automatically)
@@ -165,22 +284,6 @@ git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-If you've already configured Git globally, this prompt will just show you the current values.
-
-## Git Setup - Manually (if not already configured)
-
-To configure Git for your project:
-
-1. Install Git if you haven't already.
-2. Set your global Git configuration:
-
-```bash
-git config --global user.name "Your GitHub Username"
-git config --global user.email "Your GitHub Email"
-```
-
-3. Restart the terminal to apply the changes.
-
 ## PowerShell Execution Policy (Windows)
 
 If you're using PowerShell on Windows, you may need to change the execution policy to allow scripts to run:
@@ -191,34 +294,56 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 This allows local scripts to run but ensures that downloaded scripts are signed.
 
-## Included Setup Scripts
+## Performance Benefits of UV
 
-The repository includes a script that handles the virtual environment setup on all systems with ultra-fast uv dependency installation.
+UV provides significant performance improvements:
+- 10-100x faster package installation than pip
+- Parallel downloads and dependency resolution
+- Built-in caching system
+- Compatible with PyPI and all Python packages
+- Supports modern Python packaging standards
 
-### setup_env.sh (Cross-Platform)
+## Common UV Workflows
 
-This script:
-- Handles virtual environment setup on all platforms
-- Uses uv pip with pyproject.toml for modern dependency management
-- Automatically configures Git if needed
-- Can be run with `source setup_env.sh` on Unix or generates a PowerShell script on Windows
-
-## Performance Note
-
-This template includes support for uv, a Rust-based Python package installer that's:
-- 10-100x faster than regular pip
-- Compatible with modern Python packaging (pyproject.toml)
-- Automatically used by the setup script
-
-For manual usage after setup:
+### Starting a New Project
 
 ```bash
-uv add <package>         # Add a package to your project
-uv pip install -e .      # Reinstall your project in development mode
+# Initialize project
+uv init
+
+# Add common dependencies
+uv add numpy pandas
+
+# Add dev tools
+uv add --dev pytest black ruff
+
+# Install everything
+uv sync
+```
+
+### Updating Dependencies
+
+```bash
+# Update specific package
+uv add package-name@latest
+
+# Update all dependencies
+uv lock --update
+uv sync
+```
+
+### Working with Multiple Python Versions
+
+```bash
+# Create venv with specific Python
+uv venv --python 3.11
+
+# Run with specific version
+uv run --python 3.11 python script.py
 ```
 
 ## Conclusion
 
-This template provides a ready-to-go environment for your Python project with ultra-fast dependency installation and modern Python packaging, ensuring you don't need to repeat the setup process every time. Simply use the provided scripts and enjoy a streamlined development experience!
+This template provides a modern Python development environment leveraging UV's speed and efficiency. UV offers a significantly faster alternative to pip while maintaining full compatibility with the Python ecosystem. The automated setup scripts ensure a consistent development environment across all platforms.
 
-Feel free to modify the structure or add additional tools as needed for your project.
+For more UV commands and features, refer to the [official UV documentation](https://github.com/astral-sh/uv).
