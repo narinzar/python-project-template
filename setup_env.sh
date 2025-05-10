@@ -18,22 +18,20 @@ if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; t
 # Make this script modify the current session
 $ErrorActionPreference = "Stop"
 
-if (Test-Path "venv") {
+if (Test-Path ".venv") {
     Write-Output "Virtual environment exists. Activating..."
     # Just activate without reinstalling
-    & .\venv\Scripts\Activate.ps1
+    & .\.venv\Scripts\Activate.ps1
 } else {
     Write-Output "Creating new virtual environment..."
-    python -m venv venv
+    uv venv
     
     Write-Output "Activating virtual environment..."
-    & .\venv\Scripts\Activate.ps1
+    & .\.venv\Scripts\Activate.ps1
 
-    Write-Output "Upgrading pip..."
-    python -m pip install --upgrade pip
-
-    Write-Output "Installing uv..."
-    python -m pip install uv
+    # Initialize uv project
+    Write-Output "Initializing uv project..."
+    uv init --no-workspace
 
     # Create pyproject.toml if it doesn't exist
     if (-not (Test-Path "pyproject.toml")) {
@@ -78,6 +76,12 @@ exclude = ["dev-dependencies"]
 }
 
 Write-Output "`n[OK] Virtual environment is now ACTIVE in this window!"
+
+# Clean up the PowerShell script
+if (Test-Path "setup_venv.ps1") {
+    Remove-Item "setup_venv.ps1"
+    Write-Output "[OK] PowerShell setup script removed."
+}
 EOF
 
     echo "Windows detected. PowerShell setup script created."
@@ -131,31 +135,34 @@ exclude = ["dev-dependencies"]
 EOF
 fi
 
-if [ -d "venv" ]; then
+if [ -d ".venv" ]; then
     echo "Virtual environment exists. Activating..."
-    source venv/bin/activate
+    source .venv/bin/activate
     echo "✅ Virtual environment is now ACTIVE"
 else
     echo "Creating new virtual environment..."
 
-    if command -v apt-get &> /dev/null; then
-        echo "Installing prerequisites..."
-        sudo apt-get update && sudo apt-get install -y python3-pip
+    # Check if uv is already installed globally
+    if ! command -v uv &> /dev/null; then
+        echo "Installing uv..."
+        if command -v curl &> /dev/null; then
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+        elif command -v wget &> /dev/null; then
+            wget -qO- https://astral.sh/uv/install.sh | sh
+        else
+            echo "Neither curl nor wget found. Please install uv manually."
+            exit 1
+        fi
     fi
 
-    python3 -m venv venv --without-pip || python3 -m venv venv
-
-    if [ ! -f "venv/bin/pip" ] && [ ! -f "venv/bin/pip3" ]; then
-        echo "Setting up pip manually..."
-        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-        venv/bin/python3 get-pip.py
-        rm get-pip.py
-    fi
+    echo "Creating virtual environment with uv..."
+    uv venv
 
     echo "Activating virtual environment..."
-    source venv/bin/activate
-    pip install --upgrade pip
-    pip install uv
+    source .venv/bin/activate
+    
+    echo "Initializing uv project..."
+    uv init --no-workspace
     
     echo "Installing dependencies with uv..."
     uv pip install -e .
